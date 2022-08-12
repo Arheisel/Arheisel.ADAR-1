@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+*.bin
+*.hex
+
+.vs/*
+*/Debug/*
+*/Release/*
+*/__vm/*
+
