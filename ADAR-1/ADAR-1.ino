@@ -40,6 +40,7 @@ float currFreq = START_FREQ;
 long currMultiplier = 10;
 
 void setup() {
+    loadSettings();
     setupVFO();
     lcd.init();
     lcd.backlight();
@@ -87,9 +88,14 @@ void loop() {
         if ((millis() - tEncBtn) > DEBOUNCE_DELAY_MS) {
             if ((millis() - tEncBtn) > LONG_PRESS_MS) {
                 //encLP = true;
-                if (menu) menuDisplayItem();
-                else setupLCDMain();
                 menu = !menu;
+                if (menu) {
+                    menuDisplayItem();
+                }
+                else {
+                    storeSettings();
+                    setupLCDMain();
+                }
             }
             else {
                 encSP = true;
@@ -287,6 +293,18 @@ void frameMenu() {
             if (menuItem > 2) menuItem = 0;
             if (menuItem < 0) menuItem = 2;
             menuDisplayItem();
+        }
+    }
+
+    if (readEncSP()) {
+        lcd.setCursor(0, 1);
+        editing = !editing;
+
+        if (editing) {
+            lcd.print('E');
+        }
+        else {
+            lcd.print(LCD_BLANK_CHAR);
         }
     }
 }
