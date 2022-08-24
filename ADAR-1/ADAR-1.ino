@@ -46,9 +46,6 @@ void setup() {
     setupLCDMain();
     enc.write(0);
     pinMode(PIN_ENC_BTN, INPUT_PULLUP);
-
-    Serial.begin(9600);
-    Serial.println("Program Start");
 }
 
 void setupVFO() {
@@ -194,47 +191,47 @@ void setupLCDMain() {
     lcd.setCursor(11, 1);
     lcd.print("kHz");
     refreshLCDFreq();
+    printMultiplier();
 }
 
 
 void frameMain() {
-    if (Serial.available()) {
-        setFreq(khz(Serial.parseFloat()));
-    }
-
     if (readEncSP()) {
         if (currMultiplier >= 100000) currMultiplier = 1;
         else currMultiplier *= 10;
-        lcd.setCursor(15, 1);
-        switch (currMultiplier)
-        {
-        case 1:
-            lcd.print(1);
-            break;
-        case 10:
-            lcd.print(2);
-            break;
-        case 100:
-            lcd.print(3);
-            break;
-        case 1000:
-            lcd.print(4);
-            break;
-        case 10000:
-            lcd.print(5);
-            break;
-        case 100000:
-            lcd.print(6);
-            break;
-        default:
-            break;
-        }
+        printMultiplier();
     }
 
     setFreq(currFreq + (readEncoder() * currMultiplier));
     refreshSMeter();
 }
 
+void printMultiplier() {
+    lcd.setCursor(15, 1);
+    switch (currMultiplier)
+    {
+    case 1:
+        lcd.print(1);
+        break;
+    case 10:
+        lcd.print(2);
+        break;
+    case 100:
+        lcd.print(3);
+        break;
+    case 1000:
+        lcd.print(4);
+        break;
+    case 10000:
+        lcd.print(5);
+        break;
+    case 100000:
+        lcd.print(6);
+        break;
+    default:
+        break;
+    }
+}
 
 void setFreq(float freq) {
     if (freq <= 0) return;
