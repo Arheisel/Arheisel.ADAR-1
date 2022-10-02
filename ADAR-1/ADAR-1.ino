@@ -451,10 +451,12 @@ void SetupLcdTx() {
     drawSignalBox(1);
     lcd.setCursor(11, 0);
     lcd.print('F');
-    lcd.setCursor(15, 0);
-    lcd.print('W');
+    lcd.setCursor(14, 0);
+    lcd.print("0W");
     lcd.setCursor(11, 1);
     lcd.print('R');
+    lcd.setCursor(13, 1);
+    lcd.print("0.0");
 }
 
 void frameTx() {
