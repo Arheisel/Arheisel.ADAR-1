@@ -107,18 +107,16 @@ void loop() {
                 encLow = false;
             }
         }
-        else {
-            if (encLP == false && (millis() - tEncBtn) > LONG_PRESS_MS) {
-                menu = !menu;
-                if (menu) {
-                    menuDisplayItem();
-                }
-                else {
-                    storeSettings();
-                    setupLCDMain();
-                }
-                encLP = true;
+        else if (encLP == false && (millis() - tEncBtn) > LONG_PRESS_MS) {
+            menu = !menu;
+            if (menu) {
+                menuDisplayItem();
             }
+            else {
+                storeSettings();
+                setupLCDMain();
+            }
+            encLP = true;
         }
     }
 
@@ -231,7 +229,10 @@ int readEncoder() {
 
 //// ---------- MAIN SCREEN ----------
 
+uint8_t lastSValue = 0;
+
 void setupLCDMain() {
+    lastSValue = 0;
     lcd.clear();
     drawSignalBox(0);
     lcd.setCursor(12, 0);
@@ -301,7 +302,6 @@ void refreshLCDFreq() {
     lcd.print(buff);
 }
 
-uint8_t lastSValue = 0;
 void refreshSMeter() {
     uint8_t S = constrain(map(analogRead(PIN_SMETER), Smin, Smax, 0, 9), 0, 9);
     if (S != lastSValue) {
@@ -324,8 +324,8 @@ void frameMenu() {
         }
         else {
             menuItem += encRead;
-            if (menuItem > 2) menuItem = 0;
-            if (menuItem < 0) menuItem = 2;
+            if (menuItem > 6) menuItem = 0;
+            if (menuItem < 0) menuItem = 6;
             menuDisplayItem();
         }
     }
@@ -439,7 +439,13 @@ void menuSetItem(double val) {
 
 //// ---------- TX SCREEN ----------
 
+uint8_t lastFwd = 0;
+uint8_t lastRef = 0;
+char txBuff[4];
+
 void SetupLcdTx() {
+    lastFwd = 0;
+    lastRef = 0;
     lcd.clear();
     drawSignalBox(0);
     drawSignalBox(1);
@@ -450,10 +456,6 @@ void SetupLcdTx() {
     lcd.setCursor(11, 1);
     lcd.print('R');
 }
-
-uint8_t lastFwd = 0;
-uint8_t lastRef = 0;
-char txBuff[4];
 
 void frameTx() {
     uint8_t fwd = constrain(map(analogRead(PIN_SWR_FWD), TxFwdMin, TxFwdMax, 0, 30), 0, 30);
