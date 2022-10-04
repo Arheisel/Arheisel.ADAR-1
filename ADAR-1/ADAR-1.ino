@@ -39,6 +39,8 @@ int TxFwdMax = 1023;
 int TxRefMin = 0;
 int TxRefMax = 1023;
 
+bool testMode = 0;
+
 AD9833 vfo(PIN_VFO_FNC); // Defaults to 25MHz internal reference frequency
 LiquidCrystal_I2C lcd(0x27, 16, 2);  // set the LCD address to 0x3F for a 16 chars and 2 line display
 Encoder enc(PIN_ENC_A, PIN_ENC_B);
@@ -241,6 +243,11 @@ void setupLCDMain() {
     lcd.print("kHz");
     refreshLCDFreq();
     printMultiplier();
+
+    if (testMode) {
+        lcd.setCursor(0, 1);
+        lcd.print('T');
+    }
 }
 
 
@@ -290,7 +297,7 @@ void setFreq(float freq) {
     if (newDispFreq < 7005.0 || newDispFreq > 7298.0) return;
 
     currFreq = freq;
-    vfo.SetFrequency(REG0, freq);
+    vfo.SetFrequency(REG0, testMode ? newDispFreq : freq);
     currDispFreq = newDispFreq;
     refreshLCDFreq();
 }
@@ -395,6 +402,10 @@ void menuDisplayItem() {
         menuDrawTop("SWR Ref Max");
         menuDrawBottom(TxRefMax, "");
         break;
+    case 7:
+        menuDrawTop("Test Mode");
+        menuDrawBottom(testMode, "");
+        break;
     default:
         break;
     }
@@ -431,6 +442,10 @@ void menuSetItem(double val) {
     case 6:
         TxRefMax += val;
         menuDrawValue(TxRefMax);
+        break;
+    case 7:
+        testMode = val > 0;
+        menuDrawValue(testMode);
         break;
     default:
         break;
