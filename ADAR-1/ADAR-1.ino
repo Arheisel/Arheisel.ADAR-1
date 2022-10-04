@@ -331,8 +331,8 @@ void frameMenu() {
         }
         else {
             menuItem += encRead;
-            if (menuItem > 6) menuItem = 0;
-            if (menuItem < 0) menuItem = 6;
+            if (menuItem > 7) menuItem = 0;
+            if (menuItem < 0) menuItem = 7;
             menuDisplayItem();
         }
     }
