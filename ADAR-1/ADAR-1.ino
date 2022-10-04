@@ -294,7 +294,7 @@ void setFreq(float freq) {
     if (freq == currFreq) return;
 
     double newDispFreq = (freq + BFO_FREQ + freqCal) / 1000.0;
-    if (newDispFreq < 7005.0 || newDispFreq > 7298.0) return;
+    if ((newDispFreq < 7005.0 || newDispFreq > 7298.0) && !testMode) return;
 
     currFreq = freq;
     vfo.SetFrequency(REG0, testMode ? newDispFreq : freq);
