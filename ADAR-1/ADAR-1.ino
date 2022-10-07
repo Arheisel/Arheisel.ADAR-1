@@ -85,7 +85,7 @@ bool tx = false;
 void loop() {
     if ((millis() - tLastFrame) > FRAME_MS) {
         tLastFrame = millis();
-        if (tx) frameTx;
+        if (tx) frameTx();
         else if (menu) frameMenu();
         else frameMain();
     }
@@ -304,8 +304,8 @@ void setFreq(float freq) {
 
 void refreshLCDFreq() {
     char buff[9];
-    lcd.setCursor(2, 1);
     dtostrf(currDispFreq, 8, 3, buff);
+    lcd.setCursor(2, 1);
     lcd.print(buff);
 }
 
@@ -478,18 +478,18 @@ void frameTx() {
     uint8_t fwd = constrain(map(analogRead(PIN_SWR_FWD), TxFwdMin, TxFwdMax, 0, 30), 0, 30);
     if (fwd != lastFwd) {
         drawSignalBar(fwd / 3, lastFwd / 3, 0);
-        lcd.setCursor(13, 0);
         dtostrf(fwd / 2.0, 2, 0, txBuff);
+        lcd.setCursor(13, 0);
         lcd.print(txBuff);
         lastFwd = fwd;
     }
     
 
-    uint8_t ref = constrain(map(analogRead(PIN_SWR_REF), TxFwdMin, TxFwdMax, 0, 30), 0, 30);
+    uint8_t ref = constrain(map(analogRead(PIN_SWR_REF), TxRefMin, TxRefMax, 0, 30), 0, 30);
     if (ref != lastRef) {
         drawSignalBar(ref / 3, lastRef / 3, 1);
-        lcd.setCursor(13, 0);
         dtostrf(ref / 10.0, 3, 1, txBuff);
+        lcd.setCursor(13, 1);
         lcd.print(txBuff);
         lastRef = ref;
     }
