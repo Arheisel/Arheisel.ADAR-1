@@ -456,11 +456,15 @@ void menuSetItem(double val) {
 
 uint8_t lastFwd = 0;
 uint8_t lastRef = 0;
+uint8_t maxFwd = 0;
+uint8_t maxRef = 0;
 char txBuff[4];
 
 void SetupLcdTx() {
     lastFwd = 0;
     lastRef = 0;
+    maxFwd = 0;
+    maxRef = 0;
     lcd.clear();
     drawSignalBox(0);
     drawSignalBox(1);
@@ -478,20 +482,28 @@ void frameTx() {
     uint8_t fwd = constrain(map(analogRead(PIN_SWR_FWD), TxFwdMin, TxFwdMax, 0, 30), 0, 30);
     if (fwd != lastFwd) {
         drawSignalBar(fwd / 3, lastFwd / 3, 0);
-        dtostrf(fwd / 2.0, 2, 0, txBuff);
-        lcd.setCursor(13, 0);
-        lcd.print(txBuff);
         lastFwd = fwd;
+
+        if (fwd > maxFwd) {
+            dtostrf(fwd / 2.0, 2, 0, txBuff);
+            lcd.setCursor(13, 0);
+            lcd.print(txBuff);
+            maxFwd = fwd;
+        }
     }
     
 
     uint8_t ref = constrain(map(analogRead(PIN_SWR_REF), TxRefMin, TxRefMax, 0, 30), 0, 30);
     if (ref != lastRef) {
         drawSignalBar(ref / 3, lastRef / 3, 1);
-        dtostrf(ref / 10.0, 3, 1, txBuff);
-        lcd.setCursor(13, 1);
-        lcd.print(txBuff);
         lastRef = ref;
+
+        if (ref > maxRef) {
+            dtostrf(ref / 10.0, 3, 1, txBuff);
+            lcd.setCursor(13, 1);
+            lcd.print(txBuff);
+            maxRef = ref;
+        }
     }
 }
 
@@ -506,6 +518,8 @@ inline void drawSignalBox(int row) {
 }
 
 void drawSignalBar(int value, int lastValue, int row) {
+    if (value > 9) value = 9;
+    if (lastValue > 9) lastValue = 9;
     if (value != lastValue) {
         char buff[10];
         if (value > lastValue) {
