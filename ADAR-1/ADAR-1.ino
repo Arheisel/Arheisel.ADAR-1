@@ -297,14 +297,14 @@ void setFreq(float freq) {
     if ((newDispFreq < 7005.0 || newDispFreq > 7298.0) && !testMode) return;
 
     currFreq = freq;
-    vfo.SetFrequency(REG0, testMode ? newDispFreq : freq);
+    vfo.SetFrequency(REG0, freq);
     currDispFreq = newDispFreq;
     refreshLCDFreq();
 }
 
 void refreshLCDFreq() {
     char buff[9];
-    dtostrf(currDispFreq, 8, 3, buff);
+    dtostrf(testMode ? currFreq : currDispFreq, 8, 3, buff);
     lcd.setCursor(2, 1);
     lcd.print(buff);
 }
@@ -445,6 +445,7 @@ void menuSetItem(double val) {
         break;
     case 7:
         testMode = val > 0;
+        if (!testMode) setFreq(START_FREQ);
         menuDrawValue(testMode);
         break;
     default:
